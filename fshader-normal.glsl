@@ -3,6 +3,8 @@ precision mediump float;
 
 in vec3 H;
 in vec3 N;
+in vec3 vT;
+in vec3 vN;
 
 in vec4 SpecularColor;
 in float SpecularExponent;
@@ -18,6 +20,7 @@ uniform vec4 ambient_light;
 uniform sampler2D colorMap;
 uniform sampler2D nightMap;
 uniform sampler2D specMap;
+uniform sampler2D normMap;
 uniform int mode;
 
 void main()
@@ -26,6 +29,8 @@ void main()
     vec3 l = normalize(LightPosition - Position.xyz);
     vec3 h = normalize(H);
     vec3 n = normalize(N);
+    vec3 t = normalize(vT);
+    vec3 norm = normalize(vN);
 
     vec3 light_direction = normalize(-LightPosition);
 
@@ -50,10 +55,21 @@ void main()
         }
         spec = texture(specMap, fTexCoord) * light_color * pow(max(dot(n,h), 0.0), texture(specMap, fTexCoord).a * SpecularExponent); // specular property of the light formula
     }
-    if(mode == 1){
+    else if(mode == 1){
         amb = texture(specMap, fTexCoord) * ambient_light; // ambient&diffuse properties for the light formula
         diff = max(dot(l,n), 0.0) * texture(specMap, fTexCoord) * light_color; // diffuse term of the light formula
         spec = texture(specMap, fTexCoord) * light_color * pow(max(dot(n,h), 0.0), texture(specMap, fTexCoord).a * SpecularExponent); // specular property of the light formula
+    }
+    else if(mode == 2) {
+        vec3 biN = normalize(cross(norm, t));
+        mat4 coordMatrix = mat4(vec4(t, 0), vec4(biN, 0), vec4(norm, 0), Position);
+        vec4 newN = texture(normMap, fTexCoord);
+        newN = newN * 2.0 - 1.0;
+        newN = coordMatrix * newN;
+
+        amb = texture(normMap, fTexCoord) * ambient_light; // ambient&diffuse properties for the light formula
+        diff = max(dot(l,newN.xyz), 0.0) * texture(normMap, fTexCoord) * light_color; // diffuse term of the light formula
+        spec = SpecularColor * light_color * pow(max(dot(n,biN), 0.0), SpecularExponent); // specular property of the light formula
     }
 
     if(dot(l,n) < 0.0) {

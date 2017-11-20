@@ -2,11 +2,14 @@
 
 in vec4 vPosition;
 in vec4 vNormal;
+in vec4 vTangent;
 in vec4 vSpecularColor;
 in vec2 texCoord;
 
 out vec3 H;
 out vec3 N;
+out vec3 vT;
+out vec3 vN;
 out vec2 fTexCoord;
 out vec3 LightPosition;
 out vec4 Position;
@@ -28,6 +31,9 @@ void main() {
     vec3 E = normalize(-veyepos.xyz); // vector pointing to camera
     H = normalize(L+E); // halfway vector
     N = normalize(model_view*vNormal).xyz; // normal vector
+
+    vN = normalize(model_view * vNormal).xyz;
+    vT = normalize(model_view * vTangent).xyz;
 
     fTexCoord = texCoord;
 

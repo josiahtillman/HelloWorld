@@ -18,6 +18,7 @@ var vLightPosition;
 var utexmapsampler;//this will be a pointer to our sampler2D for color
 var unighttexmapsampler;
 var uspectexmapsampler;
+var unormtexmapsampler;
 
 
 //document elements
@@ -45,6 +46,8 @@ var nightcolorimage;
 var nightcolortex;
 var speccolorimage;
 var speccolortex;
+var normalcolorimage;
+var normalcolortex;
 
 var umode;
 var mode;
@@ -77,6 +80,8 @@ window.onload = function init() {
     gl.uniform1i(unighttexmapsampler, 1);//assign this one to texture unit 1
     uspectexmapsampler = gl.getUniformLocation(program, "specMap");
     gl.uniform1i(uspectexmapsampler, 2);//assign this one to texture unit 1
+    unormtexmapsampler = gl.getUniformLocation(program, "normMap");
+    gl.uniform1i(unormtexmapsampler, 3);//assign this one to texture unit 1
 
     umode = gl.getUniformLocation(program, "mode");
 
@@ -178,7 +183,7 @@ function makeShapesAndBuffer(){
 
     var step = (360.0 / steps)*(Math.PI / 180.0); //how much do we increase the angles by per triangle?
 
-    sphereStart = shapePoints.length/3;
+    sphereStart = shapePoints.length/4;
 
     for (var lat = 0; lat <= Math.PI ; lat += step){ //latitude
         for (var lon = 0; lon + step <= 2*Math.PI; lon += step){ //longitude
@@ -186,54 +191,66 @@ function makeShapesAndBuffer(){
             shapePoints.push(vec4(Math.sin(lat)*Math.cos(lon), Math.sin(lon)*Math.sin(lat), Math.cos(lat), 1.0)); //position
             shapePoints.push(vec4(Math.sin(lat)*Math.cos(lon), Math.sin(lon)*Math.sin(lat), Math.cos(lat), 0.0)); //normal
             shapePoints.push(vec2(1-lon/(2*Math.PI), lat/Math.PI)); // color texture
+            shapePoints.push(mult(vec4(Math.sin(lat)*Math.cos(lon), Math.sin(lon)*Math.sin(lat), Math.cos(lat), 0.0), mult(rotateX(90), rotateY(90))));
 
             shapePoints.push(vec4(Math.sin(lat)*Math.cos(lon+step), Math.sin(lat)*Math.sin(lon+step), Math.cos(lat), 1.0)); //position
             shapePoints.push(vec4(Math.sin(lat)*Math.cos(lon+step), Math.sin(lat)*Math.sin(lon+step), Math.cos(lat), 0.0)); //normal
             shapePoints.push(vec2(1-(lon+step)/(2*Math.PI), lat/Math.PI)); // color texture
+            shapePoints.push(mult(vec4(Math.sin(lat)*Math.cos(lon+step), Math.sin(lat)*Math.sin(lon+step), Math.cos(lat), 0.0), mult(rotateX(90), rotateY(90))));
 
             shapePoints.push(vec4(Math.sin(lat+step)*Math.cos(lon+step), Math.sin(lon+step)*Math.sin(lat+step), Math.cos(lat+step), 1.0));
             shapePoints.push(vec4(Math.sin(lat+step)*Math.cos(lon+step), Math.sin(lon+step)*Math.sin(lat+step), Math.cos(lat+step), 0.0));
             shapePoints.push(vec2(1-(lon+step)/(2*Math.PI), (lat+step)/Math.PI)); // color texture
+            shapePoints.push(mult(vec4(Math.sin(lat+step)*Math.cos(lon+step), Math.sin(lon+step)*Math.sin(lat+step), Math.cos(lat+step), 0.0), mult(rotateX(90), rotateY(90))));
 
             //triangle 2
             shapePoints.push(vec4(Math.sin(lat+step)*Math.cos(lon+step), Math.sin(lon+step)*Math.sin(lat+step), Math.cos(lat+step), 1.0));
             shapePoints.push(vec4(Math.sin(lat+step)*Math.cos(lon+step), Math.sin(lon+step)*Math.sin(lat+step), Math.cos(lat+step), 0.0));
             shapePoints.push(vec2(1-(lon+step)/(2*Math.PI), (lat+step)/Math.PI)); // color texture
+            shapePoints.push(mult(vec4(Math.sin(lat+step)*Math.cos(lon+step), Math.sin(lon+step)*Math.sin(lat+step), Math.cos(lat+step), 0.0), mult(rotateX(90), rotateY(90))));
 
             shapePoints.push(vec4(Math.sin(lat+step)*Math.cos(lon), Math.sin(lat+step)*Math.sin(lon), Math.cos(lat+step), 1.0));
             shapePoints.push(vec4(Math.sin(lat+step)*Math.cos(lon), Math.sin(lat+step)*Math.sin(lon), Math.cos(lat+step),0.0));
             shapePoints.push(vec2(1-lon/(2*Math.PI), (lat+step)/Math.PI)); // color texture
+            shapePoints.push(mult(vec4(Math.sin(lat+step)*Math.cos(lon), Math.sin(lat+step)*Math.sin(lon), Math.cos(lat+step),0.0), mult(rotateX(90), rotateY(90))));
 
             shapePoints.push(vec4(Math.sin(lat)*Math.cos(lon), Math.sin(lon)*Math.sin(lat), Math.cos(lat), 1.0));
             shapePoints.push(vec4(Math.sin(lat)*Math.cos(lon), Math.sin(lon)*Math.sin(lat), Math.cos(lat), 0.0));
             shapePoints.push(vec2(1-lon/(2*Math.PI), lat/Math.PI)); // color texture
+            shapePoints.push(mult(vec4(Math.sin(lat)*Math.cos(lon), Math.sin(lon)*Math.sin(lat), Math.cos(lat), 0.0), mult(rotateX(90), rotateY(90))));
         }
     }
 
-    sphereLength = shapePoints.length/3 - sphereStart;
+    sphereLength = shapePoints.length/4 - sphereStart;
 
-    rectangleStart = shapePoints.length/3;
+    rectangleStart = shapePoints.length/4;
 
     shapePoints.push(vec4(1.5, -1, 0.0, 1.0));
     shapePoints.push(vec4(0, 0, 1.0, 0.0)); //normal
     shapePoints.push(vec2(1,0)); // color texture
+    shapePoints.push(vec4(1, 0, 0, 0)); //tangent
     shapePoints.push(vec4(1.5, 1, 0.0, 1.0));
     shapePoints.push(vec4(0, 0, 1.0, 0.0)); //normal
     shapePoints.push(vec2(1,1)); // color texture
+    shapePoints.push(vec4(1, 0, 0, 0)); //tangent
     shapePoints.push(vec4(-1.5, 1, 0.0, 1.0));
     shapePoints.push(vec4(0, 0, 1.0, 0.0)); //normal
     shapePoints.push(vec2(0,1)); // color texture
+    shapePoints.push(vec4(1, 0, 0, 0)); //tangent
     shapePoints.push(vec4(-1.5, 1, 0.0, 1.0));
     shapePoints.push(vec4(0, 0, 1.0, 0.0)); //normal
     shapePoints.push(vec2(0,1)); // color texture
+    shapePoints.push(vec4(1, 0, 0, 0)); //tangent
     shapePoints.push(vec4(-1.5, -1, 0.0, 1.0));
     shapePoints.push(vec4(0, 0, 1.0, 0.0)); //normal
     shapePoints.push(vec2(0,0)); // color texture
+    shapePoints.push(vec4(1, 0, 0, 0)); //tangent
     shapePoints.push(vec4(1.5, -1, 0.0, 1.0));
     shapePoints.push(vec4(0, 0, 1.0, 0.0)); //normal
     shapePoints.push(vec2(1,0)); // color texture
+    shapePoints.push(vec4(1, 0, 0, 0)); //tangent
 
-    rectangleLength = shapePoints.length/3 - rectangleStart;
+    rectangleLength = shapePoints.length/4 - rectangleStart;
 
     //The tangent direction for a sphere will not be the same as for a flat square like this
     //Please don't try to copy and paste this for a sphere and expect it to work
@@ -243,16 +260,20 @@ function makeShapesAndBuffer(){
     gl.bufferData(gl.ARRAY_BUFFER, flatten(shapePoints), gl.STATIC_DRAW);
 
     var vPosition = gl.getAttribLocation(program, "vPosition");
-    gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 40, 0);
+    gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 56, 0);
     gl.enableVertexAttribArray(vPosition);
 
     var vNormal = gl.getAttribLocation(program, "vNormal");
-    gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 40, 16);
+    gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 56, 16);
     gl.enableVertexAttribArray(vNormal);
 
     var vTexCoord = gl.getAttribLocation(program, "texCoord");
-    gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 40, 32);
+    gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 56, 32);
     gl.enableVertexAttribArray(vTexCoord);
+
+    var vTangent = gl.getAttribLocation(program, "vTangent");
+    gl.vertexAttribPointer(vTangent, 4, gl.FLOAT, false, 56, 40);
+    gl.enableVertexAttribArray(vTangent);
 }
 
 function update() {
@@ -278,6 +299,11 @@ function initTextures() {
     speccolorimage = new Image();
     speccolorimage.onload = function() { handleTextureLoaded(speccolorimage, speccolortex); };
     speccolorimage.src = 'earthimages/EarthSpec.png';
+
+    normalcolortex = gl.createTexture();
+    normalcolorimage = new Image();
+    normalcolorimage.onload = function() { handleTextureLoaded(normalcolorimage, normalcolortex); };
+    normalcolorimage.src = 'earthimages/EarthNormal.png';
 }
 
 function handleTextureLoaded(image, texture) {
@@ -318,6 +344,8 @@ function render(){
     gl.bindTexture(gl.TEXTURE_2D, nightcolortex);
     gl.activeTexture(gl.TEXTURE2);
     gl.bindTexture(gl.TEXTURE_2D, speccolortex);
+    gl.activeTexture(gl.TEXTURE3);
+    gl.bindTexture(gl.TEXTURE_2D, normalcolortex);
     // Draw the sphere
     gl.drawArrays( gl.TRIANGLES, sphereStart, sphereLength );
     // Draw the rectangle
