@@ -283,7 +283,7 @@ function makeShapesAndBuffer(){
 
 function update() {
     if (moving) {
-        rotation = rotation+0.25;
+        rotation = rotation+0.1;
     }
     requestAnimationFrame(render);
 }

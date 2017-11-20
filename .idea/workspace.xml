@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="eceb4b28-07ff-49cb-b225-4f1d96a69d51" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/HelloWorld.js" afterPath="$PROJECT_DIR$/HelloWorld.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fshader-normal.glsl" afterPath="$PROJECT_DIR$/fshader-normal.glsl" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -27,11 +26,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HelloWorld.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="HelloWorld.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/HelloWorld.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2797">
-              <caret line="140" column="25" lean-forward="true" selection-start-line="140" selection-start-column="25" selection-end-line="140" selection-end-column="25" />
+            <state relative-caret-position="381">
+              <caret line="272" column="40" lean-forward="true" selection-start-line="272" selection-start-column="40" selection-end-line="272" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -47,11 +46,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="fshader-normal.glsl" pinned="false" current-in-tab="true">
+      <file leaf-file-name="fshader-normal.glsl" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/fshader-normal.glsl">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="540">
-              <caret line="63" column="48" lean-forward="true" selection-start-line="63" selection-start-column="48" selection-end-line="63" selection-end-column="48" />
+            <state relative-caret-position="480">
+              <caret line="59" column="17" lean-forward="true" selection-start-line="59" selection-start-column="17" selection-end-line="59" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -107,8 +106,8 @@
       <list>
         <option value="$PROJECT_DIR$/HelloWorld.html" />
         <option value="$PROJECT_DIR$/vshader-normal.glsl" />
-        <option value="$PROJECT_DIR$/HelloWorld.js" />
         <option value="$PROJECT_DIR$/fshader-normal.glsl" />
+        <option value="$PROJECT_DIR$/HelloWorld.js" />
       </list>
     </option>
   </component>
@@ -193,16 +192,15 @@
       <workItem from="1510784909681" duration="219000" />
       <workItem from="1510848365981" duration="464000" />
       <workItem from="1510872996965" duration="6882000" />
-      <workItem from="1511123948922" duration="21532000" />
+      <workItem from="1511123948922" duration="21713000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="45080000" />
+    <option name="totallyTimeSpent" value="45261000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="840" height="1027" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -503,18 +501,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/HelloWorld.js">
+    <entry file="file://$PROJECT_DIR$/fshader-normal.glsl">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2797">
-          <caret line="140" column="25" lean-forward="true" selection-start-line="140" selection-start-column="25" selection-end-line="140" selection-end-column="25" />
+        <state relative-caret-position="480">
+          <caret line="59" column="17" lean-forward="true" selection-start-line="59" selection-start-column="17" selection-end-line="59" selection-end-column="17" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fshader-normal.glsl">
+    <entry file="file://$PROJECT_DIR$/HelloWorld.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="63" column="48" lean-forward="true" selection-start-line="63" selection-start-column="48" selection-end-line="63" selection-end-column="48" />
+        <state relative-caret-position="381">
+          <caret line="272" column="40" lean-forward="true" selection-start-line="272" selection-start-column="40" selection-end-line="272" selection-end-column="40" />
           <folding />
         </state>
       </provider>
