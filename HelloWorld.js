@@ -19,6 +19,7 @@ var utexmapsampler;//this will be a pointer to our sampler2D for color
 var unighttexmapsampler;
 var uspectexmapsampler;
 var unormtexmapsampler;
+var ucloudtexmapsampler;
 
 
 //document elements
@@ -48,6 +49,8 @@ var speccolorimage;
 var speccolortex;
 var normalcolorimage;
 var normalcolortex;
+var cloudcolorimage;
+var cloudcolortex;
 
 var umode;
 var mode;
@@ -79,9 +82,11 @@ window.onload = function init() {
     unighttexmapsampler = gl.getUniformLocation(program, "nightMap");
     gl.uniform1i(unighttexmapsampler, 1);//assign this one to texture unit 1
     uspectexmapsampler = gl.getUniformLocation(program, "specMap");
-    gl.uniform1i(uspectexmapsampler, 2);//assign this one to texture unit 1
+    gl.uniform1i(uspectexmapsampler, 2);//assign this one to texture unit 2
     unormtexmapsampler = gl.getUniformLocation(program, "normMap");
-    gl.uniform1i(unormtexmapsampler, 3);//assign this one to texture unit 1
+    gl.uniform1i(unormtexmapsampler, 3);//assign this one to texture unit 3
+    ucloudtexmapsampler = gl.getUniformLocation(program, "cloudMap");
+    gl.uniform1i(ucloudtexmapsampler, 4);//assign this one to texture unit 4
 
     umode = gl.getUniformLocation(program, "mode");
 
@@ -126,13 +131,13 @@ window.onload = function init() {
             case "ArrowRight":
                 rotation-=3;
                 break;
-            case "0":
+            case "1":
                 mode = 0;
                 break;
-            case "1":
+            case "2":
                 mode = 1;
                 break;
-            case "2":
+            case "3":
                 mode = 2;
                 break;
         }
@@ -304,6 +309,11 @@ function initTextures() {
     normalcolorimage = new Image();
     normalcolorimage.onload = function() { handleTextureLoaded(normalcolorimage, normalcolortex); };
     normalcolorimage.src = 'earthimages/EarthNormal.png';
+
+    cloudcolortex = gl.createTexture();
+    cloudcolorimage = new Image();
+    cloudcolorimage.onload = function() { handleTextureLoaded(cloudcolorimage, cloudcolortex); };
+    cloudcolorimage.src = 'earthimages/earthcloudmap-visness.png';
 }
 
 function handleTextureLoaded(image, texture) {
@@ -346,9 +356,27 @@ function render(){
     gl.bindTexture(gl.TEXTURE_2D, speccolortex);
     gl.activeTexture(gl.TEXTURE3);
     gl.bindTexture(gl.TEXTURE_2D, normalcolortex);
-    // Draw the sphere
+    gl.activeTexture(gl.TEXTURE4);
+    gl.bindTexture(gl.TEXTURE_2D, cloudcolortex);
+
+    // Draw the earth
     gl.drawArrays( gl.TRIANGLES, sphereStart, sphereLength );
     // Draw the rectangle
     // gl.drawArrays( gl.TRIANGLES, rectangleStart, rectangleLength );
 
+    // Draw the clouds
+    if(mode === 0) {
+        gl.uniform1i(umode, 9);
+        gl.depthMask(false);
+        gl.enable(gl.BLEND);
+
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        mv = mult(mult(camera, mult(rotateY(rotation / 2), rotateX(90))), scalem(1.01, 1.01, 1.01));
+        gl.uniformMatrix4fv(umv, false, flatten(mv));
+        gl.drawArrays(gl.TRIANGLES, sphereStart, sphereLength);
+
+        gl.uniform1i(umode, mode);
+        gl.depthMask(true);
+        gl.disable(gl.BLEND);
+    }
 }
