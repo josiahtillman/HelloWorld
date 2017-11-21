@@ -196,33 +196,33 @@ function makeShapesAndBuffer(){
             shapePoints.push(vec4(Math.sin(lat)*Math.cos(lon), Math.sin(lon)*Math.sin(lat), Math.cos(lat), 1.0)); //position
             shapePoints.push(vec4(Math.sin(lat)*Math.cos(lon), Math.sin(lon)*Math.sin(lat), Math.cos(lat), 0.0)); //normal
             shapePoints.push(vec2(1-lon/(2*Math.PI), lat/Math.PI)); // color texture
-            shapePoints.push(mult(vec4(Math.sin(lat)*Math.cos(lon), Math.sin(lon)*Math.sin(lat), Math.cos(lat), 0.0), mult(rotateX(90), rotateY(90))));
+            shapePoints.push(vec4(Math.cos(lat)*Math.cos(lon), Math.cos(lat)*Math.sin(lon), -Math.sin(lat), 0.0));
 
             shapePoints.push(vec4(Math.sin(lat)*Math.cos(lon+step), Math.sin(lat)*Math.sin(lon+step), Math.cos(lat), 1.0)); //position
             shapePoints.push(vec4(Math.sin(lat)*Math.cos(lon+step), Math.sin(lat)*Math.sin(lon+step), Math.cos(lat), 0.0)); //normal
             shapePoints.push(vec2(1-(lon+step)/(2*Math.PI), lat/Math.PI)); // color texture
-            shapePoints.push(mult(vec4(Math.sin(lat)*Math.cos(lon+step), Math.sin(lat)*Math.sin(lon+step), Math.cos(lat), 0.0), mult(rotateX(90), rotateY(90))));
+            shapePoints.push(vec4(Math.cos(lat)*Math.cos(lon+step), Math.cos(lat)*Math.sin(lon+step), -Math.sin(lat), 0.0));
 
             shapePoints.push(vec4(Math.sin(lat+step)*Math.cos(lon+step), Math.sin(lon+step)*Math.sin(lat+step), Math.cos(lat+step), 1.0));
             shapePoints.push(vec4(Math.sin(lat+step)*Math.cos(lon+step), Math.sin(lon+step)*Math.sin(lat+step), Math.cos(lat+step), 0.0));
             shapePoints.push(vec2(1-(lon+step)/(2*Math.PI), (lat+step)/Math.PI)); // color texture
-            shapePoints.push(mult(vec4(Math.sin(lat+step)*Math.cos(lon+step), Math.sin(lon+step)*Math.sin(lat+step), Math.cos(lat+step), 0.0), mult(rotateX(90), rotateY(90))));
+            shapePoints.push(vec4(Math.cos(lat+step)*Math.cos(lon+step), Math.sin(lon+step)*Math.cos(lat+step), -Math.sin(lat+step), 0.0));
 
             //triangle 2
             shapePoints.push(vec4(Math.sin(lat+step)*Math.cos(lon+step), Math.sin(lon+step)*Math.sin(lat+step), Math.cos(lat+step), 1.0));
             shapePoints.push(vec4(Math.sin(lat+step)*Math.cos(lon+step), Math.sin(lon+step)*Math.sin(lat+step), Math.cos(lat+step), 0.0));
             shapePoints.push(vec2(1-(lon+step)/(2*Math.PI), (lat+step)/Math.PI)); // color texture
-            shapePoints.push(mult(vec4(Math.sin(lat+step)*Math.cos(lon+step), Math.sin(lon+step)*Math.sin(lat+step), Math.cos(lat+step), 0.0), mult(rotateX(90), rotateY(90))));
+            shapePoints.push(vec4(Math.cos(lat+step)*Math.cos(lon+step), Math.cos(lat+step)*Math.sin(lon+step), -Math.sin(lat+step), 0.0));
 
             shapePoints.push(vec4(Math.sin(lat+step)*Math.cos(lon), Math.sin(lat+step)*Math.sin(lon), Math.cos(lat+step), 1.0));
             shapePoints.push(vec4(Math.sin(lat+step)*Math.cos(lon), Math.sin(lat+step)*Math.sin(lon), Math.cos(lat+step),0.0));
             shapePoints.push(vec2(1-lon/(2*Math.PI), (lat+step)/Math.PI)); // color texture
-            shapePoints.push(mult(vec4(Math.sin(lat+step)*Math.cos(lon), Math.sin(lat+step)*Math.sin(lon), Math.cos(lat+step),0.0), mult(rotateX(90), rotateY(90))));
+            shapePoints.push(vec4(Math.cos(lat+step)*Math.cos(lon), Math.cos(lat+step)*Math.sin(lon), -Math.sin(lat+step),0.0));
 
             shapePoints.push(vec4(Math.sin(lat)*Math.cos(lon), Math.sin(lon)*Math.sin(lat), Math.cos(lat), 1.0));
             shapePoints.push(vec4(Math.sin(lat)*Math.cos(lon), Math.sin(lon)*Math.sin(lat), Math.cos(lat), 0.0));
             shapePoints.push(vec2(1-lon/(2*Math.PI), lat/Math.PI)); // color texture
-            shapePoints.push(mult(vec4(Math.sin(lat)*Math.cos(lon), Math.sin(lon)*Math.sin(lat), Math.cos(lat), 0.0), mult(rotateX(90), rotateY(90))));
+            shapePoints.push(vec4(Math.cos(lat)*Math.cos(lon), Math.sin(lon)*Math.cos(lat), -Math.sin(lat), 0.0));
         }
     }
 
@@ -256,9 +256,6 @@ function makeShapesAndBuffer(){
     shapePoints.push(vec4(1, 0, 0, 0)); //tangent
 
     rectangleLength = shapePoints.length/4 - rectangleStart;
-
-    //The tangent direction for a sphere will not be the same as for a flat square like this
-    //Please don't try to copy and paste this for a sphere and expect it to work
 
     var bufferId = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
@@ -366,6 +363,7 @@ function render(){
 
     // Draw the clouds
     if(mode === 0) {
+        // Set mode to clouds (9) and enable blending
         gl.uniform1i(umode, 9);
         gl.depthMask(false);
         gl.enable(gl.BLEND);
@@ -375,6 +373,7 @@ function render(){
         gl.uniformMatrix4fv(umv, false, flatten(mv));
         gl.drawArrays(gl.TRIANGLES, sphereStart, sphereLength);
 
+        // Set back the mode and disable blending
         gl.uniform1i(umode, mode);
         gl.depthMask(true);
         gl.disable(gl.BLEND);

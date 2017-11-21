@@ -42,7 +42,9 @@ void main()
     // Cosine of 80º is -0.17; Cosine of 100º is 0.17. Using this, I made a weighted average to
     // create a gradient change. This allows my change from night to day appear as a slow shift
     // Regular Globe
+    // TODO I didn't add normal mapping since it isn't working yet
     if(mode == 0 || mode == 1){
+
         if(dot(light_direction, n) <= cos(radians(80.0)) && dot(light_direction, n) >= cos(radians(100.0))) {
             amb = (texture(nightMap, fTexCoord) * ambient_light) * ((dot(light_direction, n) + 0.17) / 0.34);
             amb = amb + (texture(colorMap, fTexCoord) * ambient_light) * ((0.34 - (dot(light_direction, n) + 0.17)) / 0.34);
@@ -58,6 +60,7 @@ void main()
         spec = texture(specMap, fTexCoord) * light_color * pow(max(dot(n,h), 0.0), texture(specMap, fTexCoord).a * SpecularExponent); // specular property of the light formula
     }
     // Normal Map
+    // TODO This doesn't work fully
     else if(mode == 2) {
         vec3 biN = normalize(cross(norm, t));
         mat4 coordMatrix = mat4(vec4(t, 0), vec4(biN, 0), vec4(norm, 0), Position);
@@ -65,8 +68,8 @@ void main()
         newN = newN * 2.0 - 1.0;
         newN = coordMatrix * newN;
 
-        amb = texture(normMap, fTexCoord) * ambient_light; // ambient&diffuse properties for the light formula
-        diff = max(dot(l,newN.xyz), 0.0) * texture(normMap, fTexCoord) * light_color; // diffuse term of the light formula
+        amb = vec4(.5,.5,.5,1.0) * ambient_light; // ambient&diffuse properties for the light formula
+        diff = max(dot(l,newN.xyz), 0.0) * vec4(.5,.5,.5,1.0) * light_color; // diffuse term of the light formula
         spec = SpecularColor * light_color * pow(max(dot(n,biN), 0.0), SpecularExponent); // specular property of the light formula
     }
     // Clouds
